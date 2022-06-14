@@ -8,7 +8,7 @@ export default {
   dbConfig: {
     ...dbConfig,
     ...{
-      synchronize: true,
+      synchronize: false,
       autoLoadEntities: true,
       logging: true,
     },

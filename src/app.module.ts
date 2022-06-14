@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { BaseModule } from './base/base.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import config from '../configs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
+import { CategoriesModule } from './categories/categories.module';
+import { TagsModule } from './tags/tags.module';
 @Module({
   imports: [
-    BaseModule,
     ConfigModule.forRoot({
       load: [config],
     }),
@@ -16,6 +16,8 @@ import { UsersModule } from './users/users.module';
       inject: [ConfigService],
     }),
     UsersModule,
+    CategoriesModule,
+    TagsModule,
   ],
 })
 export class AppModule {}

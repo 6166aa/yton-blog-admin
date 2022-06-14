@@ -1,26 +1,40 @@
 import { Injectable } from '@nestjs/common';
-import { CreateBaseDto } from './dto/create-base.dto';
-import { UpdateBaseDto } from './dto/update-base.dto';
+import { Repository } from 'typeorm';
+import { BaseEntity } from './base.entity';
+import { CreateBaseDto } from './create-base.dto';
+import { QueryPaginatedDto } from './queryPaginated.dto';
+import { UpdateBaseDto } from './update-base.dto';
 
 @Injectable()
 export class BaseService {
+  constructor(private repo: Repository<BaseEntity>) {}
   create(createBaseDto: CreateBaseDto) {
-    return 'This action adds a new base';
+    return this.repo.insert(createBaseDto);
   }
 
-  findAll() {
-    return `This action returns all base`;
+  async findAll(queryPaginatedDto: QueryPaginatedDto<BaseEntity>) {
+    const [data, total] = await this.repo.findAndCount({
+      skip: queryPaginatedDto.pageSize * (queryPaginatedDto.page - 1),
+      take: queryPaginatedDto.pageSize,
+      where: queryPaginatedDto.q,
+    });
+    return {
+      page: queryPaginatedDto.page,
+      pageSize: queryPaginatedDto.pageSize,
+      data,
+      total,
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} base`;
+  findOne(id: string) {
+    return this.repo.findOneByOrFail({ id: id });
   }
 
-  update(id: number, updateBaseDto: UpdateBaseDto) {
-    return `This action updates a #${id} base`;
+  update(id: string, updateBaseDto: UpdateBaseDto) {
+    return this.repo.update(id, updateBaseDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} base`;
+  remove(id: string) {
+    return this.repo.softDelete(id);
   }
 }
