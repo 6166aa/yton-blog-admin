@@ -4,7 +4,7 @@ import { Like, Repository } from 'typeorm';
 import { BaseService } from '../base/base.service';
 import { Tag } from './entities/tag.entity';
 @Injectable()
-export class TagsService extends BaseService {
+export class TagsService extends BaseService<Tag> {
   constructor(
     @InjectRepository(Tag)
     private tagRepo: Repository<Tag>,

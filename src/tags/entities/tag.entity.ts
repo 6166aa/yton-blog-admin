@@ -1,10 +1,13 @@
 import { BaseEntity } from '@base/base.entity';
-import { ApiExtraModels, ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
+import { Expose } from 'class-transformer';
+import { IsString } from 'class-validator';
 import { Column, Entity } from 'typeorm';
 @Entity()
-@ApiExtraModels()
 export class Tag extends BaseEntity {
   @ApiProperty()
   @Column('nvarchar', { length: 20, unique: true })
-  name: string = undefined;
+  @IsString()
+  @Expose()
+  name: string;
 }

@@ -1,26 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { BaseEntity } from './base.entity';
-import { CreateBaseDto } from './create-base.dto';
-import { QueryPaginatedDto } from './queryPaginated.dto';
-import { UpdateBaseDto } from './update-base.dto';
+import { CreateBaseDto } from './types/CreateBaseDto';
+import { PageQueryDto } from './types/PageQueryDto';
+import { UpdateBaseDto } from './types/UpdateBaseDto';
 
 @Injectable()
-export class BaseService {
+export class BaseService<TEntity extends BaseEntity> {
   constructor(private repo: Repository<BaseEntity>) {}
-  create(createBaseDto: CreateBaseDto) {
-    return this.repo.insert(createBaseDto);
+  async create(createBaseDto: CreateBaseDto<TEntity>) {
+    const entity = this.repo.create(createBaseDto);
+    return this.repo.save(entity);
   }
 
-  async findAll(queryPaginatedDto: QueryPaginatedDto<BaseEntity>) {
+  async findAll(queryPaginatedDto: PageQueryDto<TEntity>) {
     const [data, total] = await this.repo.findAndCount({
-      skip: queryPaginatedDto.pageSize * (queryPaginatedDto.page - 1),
-      take: queryPaginatedDto.pageSize,
-      where: queryPaginatedDto.q,
+      skip: queryPaginatedDto.size * (queryPaginatedDto.page - 1),
+      take: queryPaginatedDto.size,
+      where: queryPaginatedDto.where as any,
     });
     return {
       page: queryPaginatedDto.page,
-      pageSize: queryPaginatedDto.pageSize,
+      pageSize: queryPaginatedDto.size,
       data,
       total,
     };
@@ -30,7 +31,7 @@ export class BaseService {
     return this.repo.findOneByOrFail({ id: id });
   }
 
-  update(id: string, updateBaseDto: UpdateBaseDto) {
+  update(id: string, updateBaseDto: UpdateBaseDto<TEntity>) {
     return this.repo.update(id, updateBaseDto);
   }
 

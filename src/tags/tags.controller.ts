@@ -5,8 +5,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { Tag } from './entities/tag.entity';
-import { QueryPaginatedDto } from '@/base/queryPaginated.dto';
 import { QueryPipe } from '@/base/pipes/query.pipe';
+import { QueryTagDto } from './dto/query-tag.dto';
 
 @ApiTags('tags')
 @Controller('tags')
@@ -17,7 +17,7 @@ export class TagsController {
     return this.tagsService.create(createTagDto);
   }
   @Get()
-  findAll(@Query(new QueryPipe<Tag>(Tag)) queryPaginatedDto: QueryPaginatedDto<Tag>) {
+  findAll(@Query(new QueryPipe<Tag>(Tag)) queryPaginatedDto: QueryTagDto) {
     return this.tagsService.findAll(queryPaginatedDto);
   }
 

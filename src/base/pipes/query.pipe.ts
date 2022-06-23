@@ -1,32 +1,30 @@
-import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
+import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
+import { validate } from 'class-validator';
 import { Like } from 'typeorm';
-import { QueryPaginatedDto } from '../queryPaginated.dto';
+import { QueryPaginatedDto } from '../dtos/query-paginated.dto';
+import { PageQueryDto } from '../types/PageQueryDto';
 
 @Injectable()
-export class QueryPipe<TEntity> implements PipeTransform<QueryPaginatedDto<TEntity>> {
-  entity: TEntity;
+export class QueryPipe<TEntity> implements PipeTransform<PageQueryDto<TEntity>> {
+  entityCtor: new () => TEntity;
   constructor(entity: new () => TEntity) {
-    this.entity = new entity();
+    this.entityCtor = entity;
   }
-  async transform(value: QueryPaginatedDto<any>, { metatype }: ArgumentMetadata) {
-    Object.keys(value).forEach((key) => {
-      if (key in this.entity) {
-        if (value.q) {
-          value.q[key] = value[key];
-          delete value[key];
-        } else {
-          value.q = {};
-          value.q[key] = value[key];
-          delete value[key];
-        }
-        const reg = /\*(.+)\*/;
-        if (typeof value.q[key] === 'string' && reg.test(value.q[key])) {
-          value.q[key] = Like(value.q[key].replace('%', '\\%').replace(reg, '%$1%'));
-        }
+  async transform(value: PageQueryDto<TEntity>) {
+    const entity = plainToClass(this.entityCtor, value, { strategy: 'excludeAll' });
+    const queryInfo = plainToClass(QueryPaginatedDto, value, { strategy: 'excludeAll' });
+    const queryDto = {
+      ...queryInfo,
+      where: {},
+    };
+    queryDto.where = {};
+    Object.keys(entity).forEach((key) => {
+      const reg = /\*(.+)\*/;
+      if (typeof entity[key] === 'string' && reg.test(entity[key])) {
+        queryDto.where[key] = Like(entity[key].replace('%', '\\%').replace(reg, '%$1%'));
       }
     });
-    const object = plainToClass(metatype, value);
-    return object;
+    return queryDto;
   }
 }
