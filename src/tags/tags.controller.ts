@@ -7,15 +7,16 @@ import { UpdateTagDto } from './dto/update-tag.dto';
 import { Tag } from './entities/tag.entity';
 import { QueryPipe } from '@/base/pipes/query.pipe';
 import { QueryTagDto } from './dto/query-tag.dto';
-
 @ApiTags('tags')
 @Controller('tags')
 export class TagsController {
   constructor(private readonly tagsService: TagsService) {}
+
   @Post()
   create(@Body() createTagDto: CreateTagDto) {
     return this.tagsService.create(createTagDto);
   }
+
   @Get()
   findAll(@Query(new QueryPipe<Tag>(Tag)) queryPaginatedDto: QueryTagDto) {
     return this.tagsService.findAll(queryPaginatedDto);
@@ -34,9 +35,5 @@ export class TagsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.tagsService.remove(id);
-  }
-  @Get('/test')
-  test() {
-    return this.tagsService.test();
   }
 }

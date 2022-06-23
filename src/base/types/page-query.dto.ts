@@ -1,5 +1,5 @@
 import { FindOptionsWhere } from 'typeorm';
-import { CreateBaseDto } from './CreateBaseDto';
+import { CreateBaseDto } from './create-base.dto';
 
 export type PageQueryDto<TEntity> = Partial<CreateBaseDto<TEntity>> & {
   page?: number;

@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { BaseEntity } from './base.entity';
-import { CreateBaseDto } from './types/CreateBaseDto';
-import { PageQueryDto } from './types/PageQueryDto';
-import { UpdateBaseDto } from './types/UpdateBaseDto';
+import { CreateBaseDto } from './types/create-base.dto';
+import { PageQueryDto } from './types/page-query.dto';
+import { UpdateBaseDto } from './types/update-base.dto';
 
 @Injectable()
 export class BaseService<TEntity extends BaseEntity> {
   constructor(private repo: Repository<BaseEntity>) {}
+
   async create(createBaseDto: CreateBaseDto<TEntity>) {
     const entity = this.repo.create(createBaseDto);
     return this.repo.save(entity);

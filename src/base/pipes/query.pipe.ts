@@ -1,9 +1,9 @@
-import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common';
+import { PipeTransform, Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Like } from 'typeorm';
 import { QueryPaginatedDto } from '../dtos/query-paginated.dto';
-import { PageQueryDto } from '../types/PageQueryDto';
+import { PageQueryDto } from '../types/page-query.dto';
 
 @Injectable()
 export class QueryPipe<TEntity> implements PipeTransform<PageQueryDto<TEntity>> {

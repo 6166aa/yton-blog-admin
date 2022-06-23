@@ -8,7 +8,6 @@ export class QueryPaginatedDto {
   @DefaultValue(10)
   @Expose()
   @IsNumber()
-  @IsOptional()
   @Type(() => Number)
   size?: number;
 
