@@ -1,5 +1,3 @@
-import { BaseEntity } from '../base.entity';
+import { CreateBaseDto } from './create-base.dto';
 
-export type UpdateBaseDto<TEntity> = {
-  [K in keyof TEntity as K extends keyof BaseEntity ? never : K]: TEntity[K];
-} & Partial<BaseEntity>;
+export type UpdateBaseDto<TEntity> = Partial<CreateBaseDto<TEntity>>;

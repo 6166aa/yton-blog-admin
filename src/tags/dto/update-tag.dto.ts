@@ -1,4 +1,4 @@
-import { PickType } from '@nestjs/swagger';
-import { Tag } from '../entities/tag.entity';
+import { PartialType } from '@nestjs/swagger';
+import { CreateTagDto } from './create-tag.dto';
 
-export class UpdateTagDto extends PickType(Tag, ['name']) {}
+export class UpdateTagDto extends PartialType(CreateTagDto) {}

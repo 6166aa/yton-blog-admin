@@ -9,9 +9,9 @@ import { UpdateBaseDto } from './types/update-base.dto';
 export class BaseService<TEntity extends BaseEntity> {
   constructor(private repo: Repository<BaseEntity>) {}
 
-  async create(createBaseDto: CreateBaseDto<TEntity>) {
+  async create(createBaseDto: CreateBaseDto<TEntity>): Promise<TEntity> {
     const entity = this.repo.create(createBaseDto);
-    return this.repo.save(entity);
+    return this.repo.save(entity) as Promise<TEntity>;
   }
 
   async findAll(queryPaginatedDto: PageQueryDto<TEntity>) {
@@ -28,8 +28,8 @@ export class BaseService<TEntity extends BaseEntity> {
     };
   }
 
-  findOne(id: string) {
-    return this.repo.findOneByOrFail({ id: id });
+  findOne(id: string): Promise<TEntity> {
+    return this.repo.findOneByOrFail({ id: id }) as Promise<TEntity>;
   }
 
   update(id: string, updateBaseDto: UpdateBaseDto<TEntity>) {
