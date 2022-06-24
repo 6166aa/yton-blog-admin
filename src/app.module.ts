@@ -5,7 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { CategoriesModule } from './categories/categories.module';
 import { TagsModule } from './tags/tags.module';
-import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { CommonExceptionsFilter } from './common/filters/common-exceptions.filter';
+import { CommonResponseInterceptor } from './common/interceptors/common-response.interceptor';
+import { ArticlesModule } from './articles/articles.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -19,6 +22,7 @@ import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
     UsersModule,
     CategoriesModule,
     TagsModule,
+    ArticlesModule,
   ],
   providers: [
     {
@@ -27,7 +31,11 @@ import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
     },
     {
       provide: APP_INTERCEPTOR,
-      useClass: ClassSerializerInterceptor,
+      useClass: CommonResponseInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: CommonExceptionsFilter,
     },
   ],
 })

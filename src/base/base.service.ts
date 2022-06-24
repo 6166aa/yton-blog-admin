@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { BadRequestException, HttpCode, Injectable } from '@nestjs/common';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { CreateBaseDto } from './types/create-base.dto';
 import { PageQueryDto } from './types/page-query.dto';
@@ -7,11 +7,11 @@ import { UpdateBaseDto } from './types/update-base.dto';
 
 @Injectable()
 export class BaseService<TEntity extends BaseEntity> {
-  constructor(private repo: Repository<BaseEntity>) {}
+  constructor(private repo: Repository<TEntity>) {}
 
   async create(createBaseDto: CreateBaseDto<TEntity>): Promise<TEntity> {
     const entity = this.repo.create(createBaseDto);
-    return this.repo.save(entity) as Promise<TEntity>;
+    return this.repo.save(entity);
   }
 
   async findAll(queryPaginatedDto: PageQueryDto<TEntity>) {
@@ -28,15 +28,23 @@ export class BaseService<TEntity extends BaseEntity> {
     };
   }
 
-  findOne(id: string): Promise<TEntity> {
-    return this.repo.findOneByOrFail({ id: id }) as Promise<TEntity>;
+  findOne(opt: FindOptionsWhere<TEntity>): Promise<TEntity> {
+    return this.repo.findOneBy(opt);
   }
 
-  update(id: string, updateBaseDto: UpdateBaseDto<TEntity>) {
-    return this.repo.update(id, updateBaseDto);
+  async update(id: string, updateBaseDto: UpdateBaseDto<TEntity>) {
+    const res = await this.repo.update(id, updateBaseDto);
+    if (!res.affected) {
+      throw new BadRequestException(`entity(id:${id}) is not found`);
+    }
+    return 'update ok';
   }
 
-  remove(id: string) {
-    return this.repo.softDelete(id);
+  async remove(id: string) {
+    const res = await this.repo.softDelete(id);
+    if (!res.affected) {
+      throw new BadRequestException(`entity(id:${id}) is not found`);
+    }
+    return 'delete ok';
   }
 }

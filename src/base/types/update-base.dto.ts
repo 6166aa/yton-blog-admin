@@ -1,3 +1,3 @@
-import { CreateBaseDto } from './create-base.dto';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
-export type UpdateBaseDto<TEntity> = Partial<CreateBaseDto<TEntity>>;
+export type UpdateBaseDto<TEntity> = QueryDeepPartialEntity<TEntity>;

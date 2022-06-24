@@ -19,12 +19,16 @@ export class QueryPipe<TEntity> implements PipeTransform<PageQueryDto<TEntity>> 
       where: {},
     };
     queryDto.where = {};
-    Object.keys(entity).forEach((key) => {
-      const reg = /\*(.+)\*/;
-      if (typeof entity[key] === 'string' && reg.test(entity[key])) {
-        queryDto.where[key] = Like(entity[key].replace('%', '\\%').replace(reg, '%$1%'));
-      }
-    });
+    Object.keys(entity)
+      .filter(Boolean)
+      .forEach((key) => {
+        const reg = /\*(.+)\*/;
+        if (typeof entity[key] === 'string' && reg.test(entity[key])) {
+          queryDto.where[key] = Like(entity[key].replace('%', '\\%').replace(reg, '%$1%'));
+          return;
+        }
+        queryDto.where[key] = entity[key];
+      });
     return queryDto;
   }
 }
