@@ -2,7 +2,7 @@ import { DefaultValue } from '@/base/decorators/defaultValue.decorator';
 import { Role } from '@/common/enums/role.enum';
 import { BaseEntity } from '@base/base.entity';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Expose, Type } from 'class-transformer';
+import { Exclude, Expose, Type } from 'class-transformer';
 import { IsBoolean, IsEmail, IsEnum, IsOptional, IsString, IsUrl } from 'class-validator';
 import { BeforeInsert, Column, Entity } from 'typeorm';
 import hashStr from '@/common/tools/hash.tool';
@@ -20,10 +20,10 @@ export class User extends BaseEntity {
   @Expose()
   username: string;
 
-  @Column('nvarchar', { length: 40, nullable: false })
+  @Column('nvarchar', { length: 80, nullable: false })
   @IsString()
   @ApiProperty()
-  @Expose()
+  @Exclude()
   password: string;
 
   @Column('nvarchar', { length: 12 })
@@ -47,14 +47,14 @@ export class User extends BaseEntity {
   @Expose()
   tempCode: string;
 
-  @Column('nvarchar', { length: 32, unique: true })
+  @Column('nvarchar', { length: 32, unique: true, nullable: true })
   @IsEmail()
   @Expose()
   @IsOptional()
   @ApiPropertyOptional()
   email?: string;
 
-  @Column('nvarchar', { length: 32, unique: true })
+  @Column('nvarchar', { length: 32, unique: true, nullable: true })
   @IsUrl()
   @Expose()
   @ApiPropertyOptional()
@@ -62,8 +62,7 @@ export class User extends BaseEntity {
   website?: string;
 
   @BeforeInsert()
-  async hashPassword() {
+  async beforeInsert() {
     this.password = await hashStr(this.password);
-    console.log('hash后的密码：' + this.password);
   }
 }
