@@ -1,8 +1,9 @@
+import { Article } from '@/articles/entities/article.entity';
 import { BaseEntity } from '@base/base.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { IsString } from 'class-validator';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToMany } from 'typeorm';
 @Entity()
 export class Tag extends BaseEntity {
   @ApiProperty()
@@ -10,4 +11,7 @@ export class Tag extends BaseEntity {
   @IsString()
   @Expose()
   name: string;
+
+  @ManyToMany(() => Article, (article) => article.tags)
+  articles: Article[];
 }

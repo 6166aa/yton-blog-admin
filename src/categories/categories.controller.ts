@@ -6,7 +6,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './entities/category.entity';
 import { QueryPipe } from '@/base/pipes/query.pipe';
-import { QueryCategoryDto } from './dto/query-tag.dto';
+import { QueryCategoryDto } from './dto/query-category.dto';
 @ApiTags('categories')
 @Controller('categories')
 export class CategoriesController {
