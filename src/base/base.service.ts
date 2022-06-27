@@ -1,5 +1,5 @@
 import { BadRequestException, HttpCode, Injectable } from '@nestjs/common';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { CreateBaseDto } from './types/create-base.dto';
 import { PageQueryDto } from './types/page-query.dto';
@@ -15,11 +15,18 @@ export class BaseService<TEntity extends BaseEntity> {
   }
 
   async findAll(queryPaginatedDto: PageQueryDto<TEntity>) {
-    const [data, total] = await this.repo.findAndCount({
+    const opt: FindManyOptions<TEntity> = {
       skip: queryPaginatedDto.size * (queryPaginatedDto.page - 1),
       take: queryPaginatedDto.size,
-      where: queryPaginatedDto.where as any,
-    });
+      where: queryPaginatedDto.where,
+    };
+    if (queryPaginatedDto.order) {
+      opt.order = queryPaginatedDto.order;
+    }
+    if (queryPaginatedDto.relations) {
+      opt.relations = queryPaginatedDto.relations;
+    }
+    const [data, total] = await this.repo.findAndCount(opt);
     return {
       page: queryPaginatedDto.page,
       pageSize: queryPaginatedDto.size,

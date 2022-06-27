@@ -6,7 +6,7 @@ import { Tag } from '@/tags/entities/tag.entity';
 import { User } from '@/users/entities/user.entity';
 import { BaseEntity } from '@base/base.entity';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Exclude, Expose, Type } from 'class-transformer';
+import { Exclude, Expose, Transform, Type } from 'class-transformer';
 import { IsArray, IsBoolean, IsDateString, IsEnum, IsOptional, IsString, IsUrl } from 'class-validator';
 import { BeforeInsert, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 @Entity()
@@ -17,9 +17,10 @@ export class Article extends BaseEntity {
   @Expose()
   title: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @Column({ default: false })
   @IsBoolean()
+  @IsOptional()
   @Expose()
   isShow: boolean;
 
@@ -34,11 +35,13 @@ export class Article extends BaseEntity {
   @IsString()
   @IsOptional()
   @Expose()
+  @Transform(({ value, obj }) => value ?? obj.content?.slice(0, 50))
   abstract: string;
 
   @ApiPropertyOptional()
   @Column({ nullable: true })
   @IsUrl()
+  @IsOptional()
   @Expose()
   cover?: string;
 
@@ -48,11 +51,11 @@ export class Article extends BaseEntity {
   @Expose()
   pubDate?: Date;
 
-  @Column()
+  @Column({ default: ArticlePerm.publish })
   @IsEnum(ArticlePerm)
   @ApiProperty({ default: ArticlePerm.publish })
+  @IsOptional()
   @Expose()
-  @DefaultValue(ArticlePerm.publish)
   perm: ArticlePerm;
 
   @Column()
