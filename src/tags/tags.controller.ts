@@ -7,6 +7,9 @@ import { UpdateTagDto } from './dto/update-tag.dto';
 import { Tag } from './entities/tag.entity';
 import { QueryPipe } from '@/base/pipes/query.pipe';
 import { QueryTagDto } from './dto/query-tag.dto';
+import { CheckPolicies } from '@/common/decorators/check-policies.decorator';
+import { AppAbility } from '@/casl/casl-ability.factory';
+import { Action } from '@/casl/action.enum';
 @ApiTags('tags')
 @Controller('tags')
 export class TagsController {
@@ -18,6 +21,7 @@ export class TagsController {
   }
 
   @Get()
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Tag))
   findAll(@Query(new QueryPipe<Tag>(Tag)) queryPaginatedDto: QueryTagDto) {
     return this.tagsService.findAll(queryPaginatedDto);
   }

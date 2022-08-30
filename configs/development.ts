@@ -1,3 +1,4 @@
+import authConfig from './auth.config';
 import dbConfig from './db.config';
 export default {
   // 端口
@@ -13,4 +14,5 @@ export default {
       logging: true,
     },
   },
+  authConfig,
 };

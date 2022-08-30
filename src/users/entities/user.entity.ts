@@ -27,18 +27,18 @@ export class User extends BaseEntity {
   @Exclude()
   password: string;
 
-  @Column('nvarchar', { length: 12 })
+  @Column('nvarchar', { length: 12, default: Role.guest })
   @IsEnum(Role)
   @Expose()
   @ApiProperty({ enum: Role })
-  @DefaultValue('guest')
+  @IsOptional()
   role: Role;
 
-  @Column('nvarchar', { length: 12 })
+  @Column('nvarchar', { length: 12, default: true })
   @IsBoolean()
   @Expose()
   @ApiPropertyOptional({ type: 'boolean' })
-  @DefaultValue(true)
+  @IsOptional()
   @Type(() => Boolean)
   status: boolean;
 

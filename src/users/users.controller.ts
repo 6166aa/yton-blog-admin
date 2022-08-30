@@ -1,4 +1,4 @@
-import { Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Req } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -9,7 +9,7 @@ import { QueryPipe } from '@/base/pipes/query.pipe';
 import { QueryUserDto } from './dto/query-user.dto';
 import { ReturnUserDto } from './dto/return-user.dto';
 import { plainToClass } from 'class-transformer';
-import { LoginDto } from './dto/login.dto';
+import { AuthGuard } from '@nestjs/passport';
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
@@ -39,9 +39,5 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
-  }
-  @Post('login')
-  login(@Body() loginDto: LoginDto) {
-    return this.usersService.login(loginDto.username, loginDto.password);
   }
 }
